@@ -1,0 +1,7 @@
+name = Page Background
+description = Page Background
+package = Page Background
+backdrop = 1.x
+
+; dependencies[] = libraries
+configure = admin/config/media/page_background

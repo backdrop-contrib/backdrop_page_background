@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Page Background Domain Integration Install.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function page_background_domain_access_schema() {
+  $schema['url_background_images_domain_access'] = array(
+    'fields' => array(
+      'bid' => array(
+        'description' => 'Background Association ID',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'domain_id' => array(
+        'description' => 'Domain ID',
+        'type' => 'int',
+        'unsigned' => FALSE,
+        'not null' => TRUE,
+      ),
+    ),
+    'primary key' => array('bid', 'domain_id'),
+  );
+  return $schema;
+}

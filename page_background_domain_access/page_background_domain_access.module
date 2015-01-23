@@ -1,0 +1,132 @@
+<?php
+
+/**
+ * @file
+ * Page Background Domain Integration.
+ */
+
+/**
+ * Implements hook_form_alter().
+ */
+function page_background_domain_access_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'page_background_admin_form' || $form_id == 'page_background_edit_form') {
+    $weight = 0;
+    foreach ($form['addfile'] as $key => &$elem) {
+      if (stripos($key, '#') !== 0) {
+        $elem['#weight'] = ++$weight;
+      }
+    }
+
+    $options = array(DOMAIN_ALL => t('All domains'));
+    foreach (domain_domains() as $key => $value) {
+      $options[$value['domain_id']] = $value['sitename'];
+    }
+
+    $defaults = array();
+    if ($form_id == 'page_background_edit_form') {
+      $defaults = db_select('url_background_images_domain_access', 'da')->fields('da', array('domain_id', 'domain_id'))->condition('bid', $form['background_row']['#value']->bid)->execute()->fetchAllKeyed();
+    }
+
+    $form['addfile']['domain'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Domain access settings'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#group' => 'additional_settings',
+      '#weight' => 1000,
+    );
+    $form['addfile']['domain']['domain_id'] = array(
+      '#title' => t('Publish to'),
+      '#type' => 'checkboxes',
+      '#tree' => TRUE,
+      '#options' => $options,
+      '#default_value' => $defaults,
+    );
+    $form['addfile']['submit']['#weight'] = 10001;
+  }
+  elseif ($form_id == 'page_background_clone_form') {
+    $weight = 0;
+    foreach ($form as $key => &$elem) {
+      if (stripos($key, '#') !== 0) {
+        $elem['#weight'] = ++$weight;
+      }
+    }
+
+    $options = array(DOMAIN_ALL => t('All domains'));
+    foreach (domain_domains() as $key => $value) {
+      $options[$value['domain_id']] = $value['sitename'];
+    }
+    $form['domain'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Domain access settings'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#group' => 'additional_settings',
+      '#weight' => 1000,
+    );
+    $form['domain']['domain_id'] = array(
+      '#title' => t('Publish to'),
+      '#type' => 'checkboxes',
+      '#tree' => TRUE,
+      '#options' => $options,
+    );
+    $form['submit']['#weight'] = 10001;
+  }
+}
+
+/**
+ * Implements hook_alter_page_background_fids().
+ */
+function page_background_domain_access_alter_page_background_fids($fids, $path, $language) {
+  $currdomain = domain_get_domain();
+  foreach ($fids as $key => $fid) {
+    if (!(empty($fid->domains) || in_array($currdomain['domain_id'], $fid->domains) || in_array(-1, $fid->domains))) {
+      unset($fids[$key]);
+    }
+  }
+  return $fids;
+}
+
+/**
+ * Implements hook_page_background_load().
+ */
+function page_background_domain_access_page_background_load($background_row) {
+  $background_row->domains = db_select('url_background_images_domain_access', 'da')->fields('da', array('domain_id', 'domain_id'))->condition('bid', $background_row->bid)->execute()->fetchAllKeyed();
+  return $background_row;
+}
+
+/**
+ * Implements hook_page_background_save().
+ */
+function page_background_domain_access_page_background_save($background_row, $form_state) {
+  if ($form_state != NULL) {
+    if (isset($form_state['values']['domain_id'])) {
+      db_delete('url_background_images_domain_access')->condition('bid', $background_row->bid)->execute();
+
+      if (!empty($form_state['values']['domain_id'][DOMAIN_ALL])) {
+        db_insert('url_background_images_domain_access')->fields(array(
+          'bid' => $background_row->bid,
+          'domain_id' => -1,
+        ))->execute();
+      }
+      else {
+        foreach ($form_state['values']['domain_id'] as $value) {
+          if (!empty($value)) {
+            db_insert('url_background_images_domain_access')->fields(array(
+              'bid' => $background_row->bid,
+              'domain_id' => $value,
+            ))->execute();
+          }
+        }
+      }
+    }
+  }
+  return $background_row;
+}
+
+/**
+ * Implements hook_page_background_delete().
+ */
+function page_background_domain_access_page_background_delete($background_row) {
+  return $background_row;
+}

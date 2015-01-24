@@ -544,7 +544,7 @@ function page_background_admin_form($form, &$form_state) {
 
   $pager=array();
   $pager['total_rows']=$count->totale;
-  $pager['items_per_page'] = config_get('page_background_admin_items_per_page',100);
+  $pager['items_per_page'] = variable_get('page_background_admin_items_per_page',100);
 
   $start = 0;
   if(isset($_REQUEST['page']) && is_numeric($_REQUEST['page'])){
@@ -622,11 +622,11 @@ function page_background_admin_form($form, &$form_state) {
   $form['addfile']['path'] = array('#type' => 'textfield', '#title' => t('Path'));
   $form['addfile']['default'] = array('#type' => 'checkbox', '#title' => t('Add to defaults'));
 
-  if (config_get('page_background_linkurl', FALSE) == TRUE) {
+  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
     $form['addfile']['bglinkurl'] = array('#type' => 'textfield', '#title' => t('Link Url'));
   }
 
-  if (config_get('page_background_slogan', FALSE) == TRUE) {
+  if (variable_get('page_background_slogan', FALSE) == TRUE) {
     $form['addfile']['bgtext'] = array('#type' => 'text_format', '#title' => t('Background Slogan'));
     $form['addfile']['bgtextlang'] = array(
       '#type' => 'select',
@@ -656,7 +656,7 @@ function page_background_admin_form_validate($form, &$form_state) {
     if ($form_state['values']['default'] != 1 && (trim($form_state['values']['path']) == '' || !backdrop_valid_path(backdrop_get_normal_path($form_state['values']['path']), TRUE))) {
       form_set_error('path', t('Invalid path'));
     }
-    if (config_get('page_background_linkurl', FALSE) == TRUE) {
+    if (variable_get('page_background_linkurl', FALSE) == TRUE) {
       if (trim($form_state['values']['bglinkurl']) != '' && parse_url($form_state['values']['bglinkurl']) === FALSE) {
         form_set_error('bglinkurl', t('Invalid Link Url'));
       }
@@ -753,10 +753,10 @@ function theme_page_background_admin_form($variables) {
   $rows = array();
 
   $header = array('', t('Path'), t('Url'));
-  if (config_get('page_background_linkurl', FALSE) == TRUE) {
+  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
     $header[] = t('Link Url');
   }
-  if (config_get('page_background_slogan', FALSE) == TRUE) {
+  if (variable_get('page_background_slogan', FALSE) == TRUE) {
     $header[] = t('Slogan');
     $header[] = t('Language');
   }
@@ -789,10 +789,10 @@ function theme_page_background_admin_form($variables) {
       $row[] = array('data' => render($elem));
       $row[] = array('data' => $infos->path == NULL ? t('Default') : check_plain($infos->path));
       $row[] = array('data' => url(file_create_url($file->uri), array('absolute' => TRUE)));
-      if (config_get('page_background_linkurl', FALSE) == TRUE) {
+      if (variable_get('page_background_linkurl', FALSE) == TRUE) {
         $row[] = array('data' => ($infos->bglinkurl == NULL) ? ' - ' : url($infos->bglinkurl, array('absolute' => TRUE)));
       }
-      if (config_get('page_background_slogan', FALSE) == TRUE) {
+      if (variable_get('page_background_slogan', FALSE) == TRUE) {
         $row[] = array('data' => ($infos->bgtext == NULL) ? ' - ' : check_plain($infos->bgtext));
         $row[] = array('data' => ($infos->bgtext == NULL || $infos->bgtextlang == NULL) ? ' - ' : $infos->bgtextlang);
       }
@@ -841,10 +841,10 @@ function page_background_clone_form($form, &$form_state, $background_row) {
   $form['uid'] = array('#type' => 'hidden', '#value' => $user->uid);
   $form['path'] = array('#type' => 'textfield', '#title' => t('Path'));
   $form['default'] = array('#type' => 'checkbox', '#title' => t('Add to defaults'));
-  if (config_get('page_background_linkurl', FALSE) == TRUE) {
+  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
     $form['bglinkurl'] = array('#type' => 'textfield', '#title' => t('Link Url'));
   }
-  if (config_get('page_background_slogan', FALSE) == TRUE) {
+  if (variable_get('page_background_slogan', FALSE) == TRUE) {
     $form['bgtext'] = array('#type' => 'text_format', '#title' => t('Background Slogan'));
     $form['bgtextlang'] = array(
       '#type' => 'select',
@@ -873,7 +873,7 @@ function page_background_clone_form_validate($form, &$form_state) {
   if ($form_state['values']['default'] != 1 && (trim($form_state['values']['path']) == '' || !backdrop_valid_path(backdrop_get_normal_path($form_state['values']['path']), TRUE))) {
     form_set_error('path', t('Invalid path'));
   }
-  if (config_get('page_background_linkurl', FALSE) == TRUE) {
+  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
     if (trim($form_state['values']['bglinkurl']) != '' && parse_url($form_state['values']['bglinkurl']) === FALSE) {
       form_set_error('bglinkurl', t('Invalid Link Url'));
     }
@@ -977,14 +977,14 @@ function page_background_edit_form($form, &$form_state, $background_row) {
     '#default_value' => ($form['background_row']['#value']->path == NULL),
   );
 
-  if (config_get('page_background_linkurl', FALSE) == TRUE) {
+  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
     $form['addfile']['bglinkurl'] = array(
       '#type' => 'textfield',
       '#title' => t('Link Url'),
       '#default_value' => $form['background_row']['#value']->bglinkurl,
     );
   }
-  if (config_get('page_background_slogan', FALSE) == TRUE) {
+  if (variable_get('page_background_slogan', FALSE) == TRUE) {
     $form['addfile']['bgtext'] = array(
       '#type' => 'text_format',
       '#title' => t('Background Slogan'),
@@ -1028,7 +1028,7 @@ function page_background_edit_form_validate($form, &$form_state) {
   if ($form_state['values']['default'] != 1 && (trim($form_state['values']['path']) == '' || !backdrop_valid_path(backdrop_get_normal_path($form_state['values']['path']), TRUE))) {
     form_set_error('path', t('Invalid path'));
   }
-  if (config_get('page_background_linkurl', FALSE) == TRUE) {
+  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
     if (trim($form_state['values']['bglinkurl']) != '' && parse_url($form_state['values']['bglinkurl']) === FALSE) {
       form_set_error('bglinkurl', t('Invalid Link Url'));
     }
@@ -1099,13 +1099,13 @@ function page_background_settings_form($form, &$form_state) {
   $form['container']['page_background_container_width'] = array(
     '#type' => 'textfield',
     '#title' => t('Container width'),
-    '#default_value' => config_get('page_background_container_width', ''),
+    '#default_value' => variable_get('page_background_container_width', ''),
   );
 
   $form['container']['page_background_container_height'] = array(
     '#type' => 'textfield',
     '#title' => t('Container height'),
-    '#default_value' => config_get('page_background_container_height', ''),
+    '#default_value' => variable_get('page_background_container_height', ''),
   );
 
   $form['slides'] = array(
@@ -1121,7 +1121,7 @@ function page_background_settings_form($form, &$form_state) {
       'images'      => t('as images'),
     ),
     '#title' => t('Slides rendered'),
-    '#default_value' => config_get('page_background_slides_type', 'styled_divs'),
+    '#default_value' => variable_get('page_background_slides_type', 'styled_divs'),
   );
 
   $stylenames = array('original' => t('Original image'));
@@ -1133,20 +1133,20 @@ function page_background_settings_form($form, &$form_state) {
     '#title' => t('Image style applied to the images'),
     '#type' => 'select',
     '#options' => $stylenames,
-    '#default_value' => config_get('page_background_image_style_name', 'original'),
+    '#default_value' => variable_get('page_background_image_style_name', 'original'),
   );
 
   $form['slides']['page_background_linkurl'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page background linkurl'),
-    '#default_value' => config_get('page_background_linkurl', FALSE),
+    '#default_value' => variable_get('page_background_linkurl', FALSE),
     '#description' => t('If enabled Page background slides will be linked to an url'),
   );
 
   $form['slides']['page_background_slogan'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page background Slogan on background'),
-    '#default_value' => config_get('page_background_slogan', FALSE),
+    '#default_value' => variable_get('page_background_slogan', FALSE),
     '#description' => t('If enabled Page background slides will have a slogan text'),
   );
 
@@ -1157,7 +1157,7 @@ function page_background_settings_form($form, &$form_state) {
       'singleframe' => t('Show one random single frame'),
       'slideshow' => t('Show slideshow'),
     ),
-    '#default_value' => config_get('page_background_default_behavior', 'singleframe'),
+    '#default_value' => variable_get('page_background_default_behavior', 'singleframe'),
   );
 
   $form['cycle'] = array(
@@ -1199,37 +1199,37 @@ function page_background_settings_form($form, &$form_state) {
       'zoom' => t('zoom'),
     ),
     '#title' => t('Animation effect'),
-    '#default_value' => config_get('page_background_animation_effect', 'scrollHorz'),
+    '#default_value' => variable_get('page_background_animation_effect', 'scrollHorz'),
   );
 
   $form['cycle']['page_background_animation_timeout'] = array(
     '#type' => 'textfield',
     '#title' => t('Animation timeout'),
-    '#default_value' => config_get('page_background_animation_timeout', 5000),
+    '#default_value' => variable_get('page_background_animation_timeout', 5000),
   );
 
   $form['cycle']['page_background_animation_speed'] = array(
     '#type' => 'textfield',
     '#title' => t('Animation speed'),
-    '#default_value' => config_get('page_background_animation_speed', 1000),
+    '#default_value' => variable_get('page_background_animation_speed', 1000),
   );
 
   $form['cycle']['page_background_delay'] = array(
     '#type' => 'textfield',
     '#title' => t('Animation initial delay'),
-    '#default_value' => config_get('page_background_delay', 0),
+    '#default_value' => variable_get('page_background_delay', 0),
   );
 
   $form['cycle']['page_background_fit'] = array(
     '#type' => 'checkbox',
     '#title' => t('Fit slides to container'),
-    '#default_value' => config_get('page_background_fit', TRUE),
+    '#default_value' => variable_get('page_background_fit', TRUE),
   );
 
   $form['cycle']['page_background_sync'] = array(
     '#type' => 'checkbox',
     '#title' => t('Sync'),
-    '#default_value' => config_get('page_background_sync', TRUE),
+    '#default_value' => variable_get('page_background_sync', TRUE),
   );
 
   $form['slideshow'] = array(
@@ -1241,26 +1241,26 @@ function page_background_settings_form($form, &$form_state) {
   $form['slideshow']['page_background_pauseonhover'] = array(
     '#type' => 'checkbox',
     '#title' => t('Pause on mousehover'),
-    '#default_value' => config_get('page_background_pauseonhover', TRUE),
+    '#default_value' => variable_get('page_background_pauseonhover', TRUE),
   );
 
   $form['slideshow']['page_background_pager'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show pager'),
-    '#default_value' => config_get('page_background_pager', TRUE),
+    '#default_value' => variable_get('page_background_pager', TRUE),
   );
 
   $form['slideshow']['page_background_pager_generator'] = array(
     '#type' => 'select',
     '#title' => t('Pager generated by'),
     '#options' => array('module' => t('Page Background'), 'js' => t('Cycle plugin')),
-    '#default_value' => config_get('page_background_pager_generator', 'module'),
+    '#default_value' => variable_get('page_background_pager_generator', 'module'),
   );
 
   $form['slideshow']['page_background_nav_links'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show slideshow navigation links'),
-    '#default_value' => config_get('page_background_nav_links', TRUE),
+    '#default_value' => variable_get('page_background_nav_links', TRUE),
   );
 
   $form['other'] = array(
@@ -1272,14 +1272,14 @@ function page_background_settings_form($form, &$form_state) {
   $form['other']['page_background_block'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page background block'),
-    '#default_value' => config_get('page_background_block', FALSE),
+    '#default_value' => variable_get('page_background_block', FALSE),
     '#description' => t('If enabled Page background will be available as a block and not automatically added to pages'),
   );
 
   $form['other']['page_background_admin_items_per_page'] = array(
     '#type' => 'textfield',
     '#title' => t('Admin form items per page'),
-    '#default_value' => config_get('page_background_admin_items_per_page',100),
+    '#default_value' => variable_get('page_background_admin_items_per_page',100),
     '#description' => t('Number of items per page on the administration form'),
   );
 
@@ -1318,7 +1318,7 @@ function page_background_settings_form_validate($form, &$form_state) {
  * Implements hook_preprocess_html().
  */
 function page_background_preprocess_html(&$variables) {
-  if (config_get('page_background_block', FALSE) == TRUE) {
+  if (variable_get('page_background_block', FALSE) == TRUE) {
     return;
   }
 
@@ -1375,7 +1375,7 @@ function _page_background_get_fids_markup($fids = array()) {
   if (!$fids || count($fids) == 0) {
     $fids = _page_background_get_default_fids($language);
     if (count($fids) > 1) {
-      if (config_get('page_background_default_behavior', 'singleframe') == 'singleframe') {
+      if (variable_get('page_background_default_behavior', 'singleframe') == 'singleframe') {
         shuffle($fids);
         $fids = array(array_shift($fids));
       }
@@ -1431,15 +1431,15 @@ function _page_background_get_fids_markup($fids = array()) {
     }
   }
 
-  $cw = config_get('page_background_container_width', '');
-  $ch = config_get('page_background_container_height', '');
-  $fx = config_get('page_background_animation_effect', 'scrollHorz');
-  $timeout = config_get('page_background_animation_timeout', 5000);
-  $speed = config_get('page_background_animation_speed', 1000);
-  $fit = config_get('page_background_fit', TRUE);
-  $delay = config_get('page_background_delay', 0);
-  $sync = config_get('page_background_sync', TRUE);
-  $slide_type = config_get('page_background_slides_type', 'styled_divs');
+  $cw = variable_get('page_background_container_width', '');
+  $ch = variable_get('page_background_container_height', '');
+  $fx = variable_get('page_background_animation_effect', 'scrollHorz');
+  $timeout = variable_get('page_background_animation_timeout', 5000);
+  $speed = variable_get('page_background_animation_speed', 1000);
+  $fit = variable_get('page_background_fit', TRUE);
+  $delay = variable_get('page_background_delay', 0);
+  $sync = variable_get('page_background_sync', TRUE);
+  $slide_type = variable_get('page_background_slides_type', 'styled_divs');
 
   if ($cw == '') {
     foreach ($fids as $fid) {
@@ -1459,7 +1459,7 @@ function _page_background_get_fids_markup($fids = array()) {
   $page_background_slide_css = array();
   $slides_css = array();
 
-  if (config_get('page_background_block', FALSE) == TRUE) {
+  if (variable_get('page_background_block', FALSE) == TRUE) {
     $page_background_container_css[] = '
       #page_background_container{
         height: ' . $ch . ((!preg_match('/%$/i', $ch)) ? 'px' : '') . ';
@@ -1626,9 +1626,9 @@ function _page_background_get_fids_markup($fids = array()) {
               'fit' => $fit,
               'delay' => $delay,
               'sync' => $sync,
-              'page_background_pager_generator' => config_get('page_background_pager_generator', 'module'),
-              'page_background_nav_links' => config_get('page_background_nav_links', TRUE),
-              'page_background_pauseonhover' => config_get('page_background_pauseonhover', TRUE),
+              'page_background_pager_generator' => variable_get('page_background_pager_generator', 'module'),
+              'page_background_nav_links' => variable_get('page_background_nav_links', TRUE),
+              'page_background_pauseonhover' => variable_get('page_background_pauseonhover', TRUE),
             ),
           ),
           'setting',
@@ -1652,18 +1652,18 @@ function _page_background_get_fids_markup($fids = array()) {
   $out['#markup'] .= '</div>';
   if (count($slides) > 1) {
     // $out['#markup'] .= '<div id="page_background_slideshow_navigation">';
-    if (config_get('page_background_nav_links', TRUE) == TRUE) {
+    if (variable_get('page_background_nav_links', TRUE) == TRUE) {
       $out['#markup'] .= theme('page_background_nav_link', array('type' => 'prev', 'text' => t('Previous')));
     }
-    if (config_get('page_background_pager', TRUE) == TRUE) {
-      if (config_get('page_background_pager_generator', 'module') == 'js') {
+    if (variable_get('page_background_pager', TRUE) == TRUE) {
+      if (variable_get('page_background_pager_generator', 'module') == 'js') {
         $out['#markup'] .= '<div id="page_background_pager" class="pager"></div>';
       }
       else {
         $out['#markup'] .= '<ul id="page_background_pager" class="pager">' . implode('', $pager) . '</ul>';
       }
     }
-    if (config_get('page_background_nav_links', TRUE) == TRUE) {
+    if (variable_get('page_background_nav_links', TRUE) == TRUE) {
       $out['#markup'] .= theme('page_background_nav_link', array('type' => 'next', 'text' => t('Next')));
     }
     // $out['#markup'] .= '</div>';
@@ -1702,11 +1702,11 @@ function theme_page_background_slide($variables) {
 
   $out = '';
 
-  if (config_get('page_background_slogan', FALSE) == TRUE) {
+  if (variable_get('page_background_slogan', FALSE) == TRUE) {
     $image  .= (trim($background_row->bgtext) != '') ? '<div class="slogan">' . check_markup($background_row->bgtext, $background_row->bgtextformat, $background_row->bgtextlang) . '</div>' : '';
   }
 
-  if (config_get('page_background_linkurl', FALSE) == TRUE && $background_row->bglinkurl != NULL) {
+  if (variable_get('page_background_linkurl', FALSE) == TRUE && $background_row->bglinkurl != NULL) {
     $out = '<div class="page_background_slide">' . l($image, $background_row->bglinkurl, array('html' => TRUE)) . '</div>';
   }
   else {
@@ -1752,7 +1752,7 @@ function theme_page_background_pager_item($variables) {
  */
 function _page_background_get_markup_by_path($path) {
   global $theme_key, $language;
-  $admintheme = config_get('admin_theme', '');
+  $admintheme = variable_get('admin_theme', '');
   if (trim(strtolower($theme_key)) == trim(strtolower($admintheme))) {
     return "";
   }
@@ -1775,12 +1775,12 @@ function _page_background_get_markup_by_path($path) {
 function _page_background_get_fids($path = '<front>', $language = NULL) {
   $query = db_select('url_background_images', 'bg');
   $query->fields('bg');
-  $query->addExpression("'" . config_get('page_background_image_style_name', 'original') . "'", '_stylename');
+  $query->addExpression("'" . variable_get('page_background_image_style_name', 'original') . "'", '_stylename');
   $query->condition('path', $path, '=');
   $query->orderBy('weight');
   $query->orderBy('created');
 
-  if (config_get('page_background_slogan', FALSE) == TRUE && $language != NULL) {
+  if (variable_get('page_background_slogan', FALSE) == TRUE && $language != NULL) {
     $or = db_or();
     $or->condition('bgtextlang', $language->langcode);
 
@@ -1816,7 +1816,7 @@ function _page_background_get_fids($path = '<front>', $language = NULL) {
 function _page_background_get_default_fids($language = NULL) {
   $query = db_select('url_background_images', 'bg');
   $query->fields('bg');
-  $query->addExpression("'" . config_get('page_background_image_style_name', 'original') . "'", '_stylename');
+  $query->addExpression("'" . variable_get('page_background_image_style_name', 'original') . "'", '_stylename');
   $query->condition('path', NULL, 'IS');
 
   if ($language != NULL) {
@@ -2018,7 +2018,7 @@ function _page_background_cycle_library_path() {
  */
 function page_background_block_info() {
   $blocks = array();
-  if (config_get('page_background_block', FALSE) == TRUE) {
+  if (variable_get('page_background_block', FALSE) == TRUE) {
     $blocks['page_background_block'] = array(
       'info' => t('Page Backgrounds Block'),
       'cache' => BACKDROP_NO_CACHE,
@@ -2074,7 +2074,7 @@ function page_background_block_view($delta = '') {
         }
       }
 
-      $add_css = config_get('page_background_block_additional_css', '');
+      $add_css = variable_get('page_background_block_additional_css', '');
       if (trim($add_css) != '') {
         backdrop_add_css($add_css, 'inline');
       }
@@ -2094,7 +2094,7 @@ function page_background_block_configure($delta = '') {
     $form['page_background_block_additional_css'] = array(
       '#type' => 'textarea',
       '#title' => t('Additional css'),
-      '#default_value' => config_get('page_background_block_additional_css', ''),
+      '#default_value' => variable_get('page_background_block_additional_css', ''),
     );
   }
   return $form;
@@ -2105,7 +2105,7 @@ function page_background_block_configure($delta = '') {
  */
 function page_background_block_save($delta = '', $edit = array()) {
   if ($delta == 'page_background_block') {
-    config_set('page_background_block_additional_css', $edit['page_background_block_additional_css']);
+    variable_set('page_background_block_additional_css', $edit['page_background_block_additional_css']);
   }
 }
 

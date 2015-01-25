@@ -1,7 +1,7 @@
 page_background
 ===============
 
-BackDrop page_background
+Backdrop page_background
 
 A simple way to associate an image or a slideshow to a path.
 

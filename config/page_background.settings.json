@@ -1,0 +1,22 @@
+{
+  "page_background_admin_items_per_page": 100,
+  "page_background_animation_effect":  "scrollHorz",
+  "page_background_animation_speed":  1000,
+  "page_background_animation_timeout":  5000,
+  "page_background_block":  false,
+  "page_background_block_additional_css":  "",
+  "page_background_container_height":  "",
+  "page_background_container_width":  "",
+  "page_background_default_behavior":  "singleframe",
+  "page_background_delay":  0,
+  "page_background_fit":  true,
+  "page_background_image_style_name":  "original",
+  "page_background_linkurl":  false,
+  "page_background_nav_links":  true,
+  "page_background_pager":  true,
+  "page_background_pager_generator":  "module",
+  "page_background_pauseonhover":  true,
+  "page_background_slides_type":  "styled_divs",
+  "page_background_slogan":  false,
+  "page_background_sync":  true
+}

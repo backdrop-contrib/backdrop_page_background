@@ -133,7 +133,6 @@ function page_background_theme($existing, $type, $theme, $path) {
  * Page_background_addmore_uploads_callback().
  *
  * Add a new image callback.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_addmore_uploads_callback($form, $form_state) {
   return $form['page_backgrounds']['uploads_fieldset']['page_backgrounds_uploadfile' . $form['page_backgrounds']['page_backgrounds_num_uploads']['#value']];
@@ -143,7 +142,6 @@ function page_background_addmore_uploads_callback($form, $form_state) {
  * Page_background_get_languages_selectoptions().
  *
  * Returns the languages list for the select element.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function _page_background_get_languages_selectoptions() {
   $out = array(PAGE_BACKGROUND_ANY_LANGUAGE => t('Any'));
@@ -256,7 +254,6 @@ function page_background_form_taxonomy_form_term_alter(&$form, &$form_state, $fo
  * Page_background_form_taxonomy_form_term_validate().
  *
  * Validate backgrounds on term form.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_form_taxonomy_form_term_validate($form, &$form_state) {
   foreach ($form_state['values'] as $key => $value) {
@@ -269,7 +266,6 @@ function page_background_form_taxonomy_form_term_validate($form, &$form_state) {
  * Page_background_form_taxonomy_form_term_submit().
  *
  * Actually adds backgrounds to the term.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_form_taxonomy_form_term_submit($form, &$form_state) {
   global $user;
@@ -310,7 +306,6 @@ function page_background_form_taxonomy_form_term_submit($form, &$form_state) {
  * Implements hook_taxonomy_term_delete().
  *
  * Removes associated backgrounds on term deletion.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_taxonomy_term_delete($term) {
   $bids = array();
@@ -417,7 +412,6 @@ function page_background_form_node_form_alter(&$form, &$form_state, $form_id) {
  * Page_background_form_node_form_validate().
  *
  * Validate backgrounds on node form.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_form_node_form_validate($form, &$form_state) {
   foreach ($form_state['values'] as $key => $value) {
@@ -430,7 +424,6 @@ function page_background_form_node_form_validate($form, &$form_state) {
  * Implements hook_node_submit().
  *
  * Actually adds backgrounds to the node.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_node_submit($node, $form, &$form_state) {
   global $user;
@@ -468,7 +461,6 @@ function page_background_node_submit($node, $form, &$form_state) {
  * Implements hook_node_delete().
  *
  * Removes associated backgrounds on node deletion.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_node_delete($node) {
   $bids = array();
@@ -486,7 +478,6 @@ function page_background_node_delete($node) {
  * Page_background_admin_filter_form().
  *
  * Filter by path form for the administration page.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_admin_filter_form($form, &$form_state) {
   $form['#method'] = 'GET';
@@ -513,10 +504,10 @@ function page_background_admin_filter_form($form, &$form_state) {
  * Page_background_admin_form().
  *
  * Administration page form.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_admin_form($form, &$form_state) {
   global $user;
+  $config = config('page_background.settings');
   $query = db_select('url_background_images', 'bg');
   $query->fields('bg');
   if (!empty($_REQUEST['filter'])) {
@@ -544,7 +535,7 @@ function page_background_admin_form($form, &$form_state) {
 
   $pager=array();
   $pager['total_rows']=$count->totale;
-  $pager['items_per_page'] = variable_get('page_background_admin_items_per_page',100);
+  $pager['items_per_page'] = $config->get('page_background_admin_items_per_page');
 
   $start = 0;
   if(isset($_REQUEST['page']) && is_numeric($_REQUEST['page'])){
@@ -622,11 +613,11 @@ function page_background_admin_form($form, &$form_state) {
   $form['addfile']['path'] = array('#type' => 'textfield', '#title' => t('Path'));
   $form['addfile']['default'] = array('#type' => 'checkbox', '#title' => t('Add to defaults'));
 
-  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
+  if ($config->get('page_background_linkurl') == TRUE) {
     $form['addfile']['bglinkurl'] = array('#type' => 'textfield', '#title' => t('Link Url'));
   }
 
-  if (variable_get('page_background_slogan', FALSE) == TRUE) {
+  if ($config->get('page_background_slogan') == TRUE) {
     $form['addfile']['bgtext'] = array('#type' => 'text_format', '#title' => t('Background Slogan'));
     $form['addfile']['bgtextlang'] = array(
       '#type' => 'select',
@@ -646,9 +637,9 @@ function page_background_admin_form($form, &$form_state) {
  * Page_background_admin_form_validate().
  *
  * Validates the administration page form.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_admin_form_validate($form, &$form_state) {
+  $config = config('page_background.settings');
   if ($form_state['values']['op'] == t('Submit')) {
     if (file_load($form_state['values']['uploadfile']) == FALSE) {
       form_set_error('uploadfile', t('A background image is necessary'));
@@ -656,7 +647,7 @@ function page_background_admin_form_validate($form, &$form_state) {
     if ($form_state['values']['default'] != 1 && (trim($form_state['values']['path']) == '' || !backdrop_valid_path(backdrop_get_normal_path($form_state['values']['path']), TRUE))) {
       form_set_error('path', t('Invalid path'));
     }
-    if (variable_get('page_background_linkurl', FALSE) == TRUE) {
+    if ($config->get('page_background_linkurl') == TRUE) {
       if (trim($form_state['values']['bglinkurl']) != '' && parse_url($form_state['values']['bglinkurl']) === FALSE) {
         form_set_error('bglinkurl', t('Invalid Link Url'));
       }
@@ -679,7 +670,6 @@ function page_background_admin_form_validate($form, &$form_state) {
  * Page_background_admin_form_submit().
  *
  * Actually saves the admonistration page form changes.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_admin_form_submit($form, &$form_state) {
   if ($form_state['values']['op'] == t('Submit')) {
@@ -744,19 +734,19 @@ function page_background_admin_form_submit($form, &$form_state) {
  * Theme_page_background_admin_form().
  *
  * Renders the administration page form as i wanted to be.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function theme_page_background_admin_form($variables) {
+  $config = config('page_background.settings');
   $form = $variables['form'];
   backdrop_add_tabledrag('page-background-table', 'order', 'sibling', 'my-elements-weight');
   $out = "";
   $rows = array();
 
   $header = array('', t('Path'), t('Url'));
-  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
+  if ($config->get('page_background_linkurl') == TRUE) {
     $header[] = t('Link Url');
   }
-  if (variable_get('page_background_slogan', FALSE) == TRUE) {
+  if ($config->get('page_background_slogan') == TRUE) {
     $header[] = t('Slogan');
     $header[] = t('Language');
   }
@@ -776,7 +766,7 @@ function theme_page_background_admin_form($variables) {
 
       $file = file_load($infos->fid);
       $themed_image = array(
-        'path' => $file->uri,
+        'uri' => $file->uri,
         'style_name' => 'thumbnail',
       );
 
@@ -789,10 +779,10 @@ function theme_page_background_admin_form($variables) {
       $row[] = array('data' => render($elem));
       $row[] = array('data' => $infos->path == NULL ? t('Default') : check_plain($infos->path));
       $row[] = array('data' => url(file_create_url($file->uri), array('absolute' => TRUE)));
-      if (variable_get('page_background_linkurl', FALSE) == TRUE) {
+      if ($config->get('page_background_linkurl') == TRUE) {
         $row[] = array('data' => ($infos->bglinkurl == NULL) ? ' - ' : url($infos->bglinkurl, array('absolute' => TRUE)));
       }
-      if (variable_get('page_background_slogan', FALSE) == TRUE) {
+      if ($config->get('page_background_slogan') == TRUE) {
         $row[] = array('data' => ($infos->bgtext == NULL) ? ' - ' : check_plain($infos->bgtext));
         $row[] = array('data' => ($infos->bgtext == NULL || $infos->bgtextlang == NULL) ? ' - ' : $infos->bgtextlang);
       }
@@ -827,10 +817,10 @@ function theme_page_background_admin_form($variables) {
  * Page_background_clone_form().
  *
  * Clones an existing page background.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_clone_form($form, &$form_state, $background_row) {
   global $user;
+  $config = config('page_background.settings');
 
   $form['#attached']['js'][] = array(
     'data' => backdrop_get_path('module', 'page_background') . '/js/page_background_admin.js',
@@ -841,10 +831,10 @@ function page_background_clone_form($form, &$form_state, $background_row) {
   $form['uid'] = array('#type' => 'hidden', '#value' => $user->uid);
   $form['path'] = array('#type' => 'textfield', '#title' => t('Path'));
   $form['default'] = array('#type' => 'checkbox', '#title' => t('Add to defaults'));
-  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
+  if ($config->get('page_background_linkurl') == TRUE) {
     $form['bglinkurl'] = array('#type' => 'textfield', '#title' => t('Link Url'));
   }
-  if (variable_get('page_background_slogan', FALSE) == TRUE) {
+  if ($config->get('page_background_slogan') == TRUE) {
     $form['bgtext'] = array('#type' => 'text_format', '#title' => t('Background Slogan'));
     $form['bgtextlang'] = array(
       '#type' => 'select',
@@ -864,16 +854,16 @@ function page_background_clone_form($form, &$form_state, $background_row) {
  * Page_background_clone_form_validate().
  *
  * Validate a cloning submission.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_clone_form_validate($form, &$form_state) {
+  $config = config('page_background.settings');
   if (!is_numeric($form_state['values']['bid']) || (page_background_load($form_state['values']['bid'])) === FALSE) {
     form_set_error('', t('A background image is necessary'));
   }
   if ($form_state['values']['default'] != 1 && (trim($form_state['values']['path']) == '' || !backdrop_valid_path(backdrop_get_normal_path($form_state['values']['path']), TRUE))) {
     form_set_error('path', t('Invalid path'));
   }
-  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
+  if ($config->get('page_background_linkurl') == TRUE) {
     if (trim($form_state['values']['bglinkurl']) != '' && parse_url($form_state['values']['bglinkurl']) === FALSE) {
       form_set_error('bglinkurl', t('Invalid Link Url'));
     }
@@ -884,7 +874,6 @@ function page_background_clone_form_validate($form, &$form_state) {
  * Page_background_clone_form_submit().
  *
  * Actually clones a background.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_clone_form_submit($form, &$form_state) {
   $background_row_orig = page_background_load($form_state['values']['bid']);
@@ -915,10 +904,10 @@ function page_background_clone_form_submit($form, &$form_state) {
  * Page_background_edit_form().
  *
  * Edit an existing page background.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_edit_form($form, &$form_state, $background_row) {
   global $user;
+  $config = config('page_background.settings');
 
   $form['#attached']['js'][] = array(
     'data' => backdrop_get_path('module', 'page_background') . '/js/page_background_admin.js',
@@ -977,14 +966,14 @@ function page_background_edit_form($form, &$form_state, $background_row) {
     '#default_value' => ($form['background_row']['#value']->path == NULL),
   );
 
-  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
+  if ($config->get('page_background_linkurl') == TRUE) {
     $form['addfile']['bglinkurl'] = array(
       '#type' => 'textfield',
       '#title' => t('Link Url'),
       '#default_value' => $form['background_row']['#value']->bglinkurl,
     );
   }
-  if (variable_get('page_background_slogan', FALSE) == TRUE) {
+  if ($config->get('page_background_slogan') == TRUE) {
     $form['addfile']['bgtext'] = array(
       '#type' => 'text_format',
       '#title' => t('Background Slogan'),
@@ -1019,16 +1008,16 @@ function page_background_edit_form($form, &$form_state, $background_row) {
  * Page_background_edit_form_validate().
  *
  * Validate a editing submission.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_edit_form_validate($form, &$form_state) {
+  $config = config('page_background.settings');
   if ((file_load($form_state['values']['uploadfile'])) === FALSE) {
     form_set_error('uploadfile', t('A background image is necessary'));
   }
   if ($form_state['values']['default'] != 1 && (trim($form_state['values']['path']) == '' || !backdrop_valid_path(backdrop_get_normal_path($form_state['values']['path']), TRUE))) {
     form_set_error('path', t('Invalid path'));
   }
-  if (variable_get('page_background_linkurl', FALSE) == TRUE) {
+  if ($config->get('page_background_linkurl') == TRUE) {
     if (trim($form_state['values']['bglinkurl']) != '' && parse_url($form_state['values']['bglinkurl']) === FALSE) {
       form_set_error('bglinkurl', t('Invalid Link Url'));
     }
@@ -1039,7 +1028,6 @@ function page_background_edit_form_validate($form, &$form_state) {
  * Page_background_edit_form_submit().
  *
  * Actually update a background.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_edit_form_submit($form, &$form_state) {
 
@@ -1075,12 +1063,23 @@ function page_background_edit_form_submit($form, &$form_state) {
 }
 
 /**
+* Implements hook_config_info().
+*/
+function page_background_config_info() {
+  $prefixes['page_background.settings'] = array(
+    'label' => t('Page background settings'),
+    'group' => t('Page background'),
+  );
+  return $prefixes;
+}
+
+/**
  * Page_background_settings_form().
  *
  * Settings form for the module.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_settings_form($form, &$form_state) {
+  $config = config('page_background.settings');
 
   // if (_page_background_cycle_library_path() == FALSE) {
   //   backdrop_set_message(t("Cycle library not installed. Slideshows won't be available."), 'warning');
@@ -1099,13 +1098,13 @@ function page_background_settings_form($form, &$form_state) {
   $form['container']['page_background_container_width'] = array(
     '#type' => 'textfield',
     '#title' => t('Container width'),
-    '#default_value' => variable_get('page_background_container_width', ''),
+    '#default_value' => $config->get('page_background_container_width', ''),
   );
 
   $form['container']['page_background_container_height'] = array(
     '#type' => 'textfield',
     '#title' => t('Container height'),
-    '#default_value' => variable_get('page_background_container_height', ''),
+    '#default_value' => $config->get('page_background_container_height', ''),
   );
 
   $form['slides'] = array(
@@ -1121,7 +1120,7 @@ function page_background_settings_form($form, &$form_state) {
       'images'      => t('as images'),
     ),
     '#title' => t('Slides rendered'),
-    '#default_value' => variable_get('page_background_slides_type', 'styled_divs'),
+    '#default_value' => $config->get('page_background_slides_type', 'styled_divs'),
   );
 
   $stylenames = array('original' => t('Original image'));
@@ -1133,20 +1132,20 @@ function page_background_settings_form($form, &$form_state) {
     '#title' => t('Image style applied to the images'),
     '#type' => 'select',
     '#options' => $stylenames,
-    '#default_value' => variable_get('page_background_image_style_name', 'original'),
+    '#default_value' => $config->get('page_background_image_style_name', 'original'),
   );
 
   $form['slides']['page_background_linkurl'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page background linkurl'),
-    '#default_value' => variable_get('page_background_linkurl', FALSE),
+    '#default_value' => $config->get('page_background_linkurl', FALSE),
     '#description' => t('If enabled Page background slides will be linked to an url'),
   );
 
   $form['slides']['page_background_slogan'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page background Slogan on background'),
-    '#default_value' => variable_get('page_background_slogan', FALSE),
+    '#default_value' => $config->get('page_background_slogan', FALSE),
     '#description' => t('If enabled Page background slides will have a slogan text'),
   );
 
@@ -1157,7 +1156,7 @@ function page_background_settings_form($form, &$form_state) {
       'singleframe' => t('Show one random single frame'),
       'slideshow' => t('Show slideshow'),
     ),
-    '#default_value' => variable_get('page_background_default_behavior', 'singleframe'),
+    '#default_value' => $config->get('page_background_default_behavior', 'singleframe'),
   );
 
   $form['cycle'] = array(
@@ -1199,37 +1198,37 @@ function page_background_settings_form($form, &$form_state) {
       'zoom' => t('zoom'),
     ),
     '#title' => t('Animation effect'),
-    '#default_value' => variable_get('page_background_animation_effect', 'scrollHorz'),
+    '#default_value' => $config->get('page_background_animation_effect', 'scrollHorz'),
   );
 
   $form['cycle']['page_background_animation_timeout'] = array(
     '#type' => 'textfield',
     '#title' => t('Animation timeout'),
-    '#default_value' => variable_get('page_background_animation_timeout', 5000),
+    '#default_value' => $config->get('page_background_animation_timeout', 5000),
   );
 
   $form['cycle']['page_background_animation_speed'] = array(
     '#type' => 'textfield',
     '#title' => t('Animation speed'),
-    '#default_value' => variable_get('page_background_animation_speed', 1000),
+    '#default_value' => $config->get('page_background_animation_speed', 1000),
   );
 
   $form['cycle']['page_background_delay'] = array(
     '#type' => 'textfield',
     '#title' => t('Animation initial delay'),
-    '#default_value' => variable_get('page_background_delay', 0),
+    '#default_value' => $config->get('page_background_delay', 0),
   );
 
   $form['cycle']['page_background_fit'] = array(
     '#type' => 'checkbox',
     '#title' => t('Fit slides to container'),
-    '#default_value' => variable_get('page_background_fit', TRUE),
+    '#default_value' => $config->get('page_background_fit', TRUE),
   );
 
   $form['cycle']['page_background_sync'] = array(
     '#type' => 'checkbox',
     '#title' => t('Sync'),
-    '#default_value' => variable_get('page_background_sync', TRUE),
+    '#default_value' => $config->get('page_background_sync', TRUE),
   );
 
   $form['slideshow'] = array(
@@ -1241,26 +1240,26 @@ function page_background_settings_form($form, &$form_state) {
   $form['slideshow']['page_background_pauseonhover'] = array(
     '#type' => 'checkbox',
     '#title' => t('Pause on mousehover'),
-    '#default_value' => variable_get('page_background_pauseonhover', TRUE),
+    '#default_value' => $config->get('page_background_pauseonhover', TRUE),
   );
 
   $form['slideshow']['page_background_pager'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show pager'),
-    '#default_value' => variable_get('page_background_pager', TRUE),
+    '#default_value' => $config->get('page_background_pager', TRUE),
   );
 
   $form['slideshow']['page_background_pager_generator'] = array(
     '#type' => 'select',
     '#title' => t('Pager generated by'),
     '#options' => array('module' => t('Page Background'), 'js' => t('Cycle plugin')),
-    '#default_value' => variable_get('page_background_pager_generator', 'module'),
+    '#default_value' => $config->get('page_background_pager_generator', 'module'),
   );
 
   $form['slideshow']['page_background_nav_links'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show slideshow navigation links'),
-    '#default_value' => variable_get('page_background_nav_links', TRUE),
+    '#default_value' => $config->get('page_background_nav_links', TRUE),
   );
 
   $form['other'] = array(
@@ -1272,29 +1271,26 @@ function page_background_settings_form($form, &$form_state) {
   $form['other']['page_background_block'] = array(
     '#type' => 'checkbox',
     '#title' => t('Page background block'),
-    '#default_value' => variable_get('page_background_block', FALSE),
+    '#default_value' => $config->get('page_background_block', FALSE),
     '#description' => t('If enabled Page background will be available as a block and not automatically added to pages'),
   );
 
   $form['other']['page_background_admin_items_per_page'] = array(
     '#type' => 'textfield',
     '#title' => t('Admin form items per page'),
-    '#default_value' => variable_get('page_background_admin_items_per_page',100),
+    '#default_value' => $config->get('page_background_admin_items_per_page',100),
     '#description' => t('Number of items per page on the administration form'),
   );
 
-
-
   $form['#validate'][] = 'page_background_settings_form_validate';
-
-  return system_settings_form($form);
+  // return system_settings_form($form);
+  return $form;
 }
 
 /**
  * Page_background_settings_form_validate().
  *
  * Validate the module's settings form.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_settings_form_validate($form, &$form_state) {
   if (trim($form_state['values']['page_background_container_height']) != '' && !is_numeric($form_state['values']['page_background_container_height']) && !preg_match('/%$/i', $form_state['values']['page_background_container_height'])) {
@@ -1315,10 +1311,24 @@ function page_background_settings_form_validate($form, &$form_state) {
 }
 
 /**
+ * Page_background_settings_form_submit().
+ *
+ * Settings form submission handler.
+ */
+function page_background_settings_form_submit($form, &$form_state) {
+  $config = config('page_background.settings');
+  // $config->set('my_setting', $form_state['values']['my_setting']);
+  $config->save();
+  backdrop_set_message(t('The configuration options have been saved.'));
+}
+
+
+/**
  * Implements hook_preprocess_html().
  */
 function page_background_preprocess_html(&$variables) {
-  if (variable_get('page_background_block', FALSE) == TRUE) {
+  $config = config('page_background.settings');
+  if ($config->get('page_background_block') == TRUE) {
     return;
   }
 
@@ -1367,15 +1377,15 @@ function page_background_preprocess_html(&$variables) {
  * Page_background_get_fids_markup().
  *
  * Returns the markup for the backgrounds array passed as parameter.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function _page_background_get_fids_markup($fids = array()) {
   global $language;
+  $config = config('page_background.settings');
   $out = array();
   if (!$fids || count($fids) == 0) {
     $fids = _page_background_get_default_fids($language);
     if (count($fids) > 1) {
-      if (variable_get('page_background_default_behavior', 'singleframe') == 'singleframe') {
+      if ($config->get('page_background_default_behavior') == 'singleframe') {
         shuffle($fids);
         $fids = array(array_shift($fids));
       }
@@ -1431,15 +1441,15 @@ function _page_background_get_fids_markup($fids = array()) {
     }
   }
 
-  $cw = variable_get('page_background_container_width', '');
-  $ch = variable_get('page_background_container_height', '');
-  $fx = variable_get('page_background_animation_effect', 'scrollHorz');
-  $timeout = variable_get('page_background_animation_timeout', 5000);
-  $speed = variable_get('page_background_animation_speed', 1000);
-  $fit = variable_get('page_background_fit', TRUE);
-  $delay = variable_get('page_background_delay', 0);
-  $sync = variable_get('page_background_sync', TRUE);
-  $slide_type = variable_get('page_background_slides_type', 'styled_divs');
+  $cw = $config->get('page_background_container_width');
+  $ch = $config->get('page_background_container_height');
+  $fx = $config->get('page_background_animation_effect');
+  $timeout = $config->get('page_background_animation_timeout');
+  $speed = $config->get('page_background_animation_speed');
+  $fit = $config->get('page_background_fit');
+  $delay = $config->get('page_background_delay');
+  $sync = $config->get('page_background_sync');
+  $slide_type = $config->get('page_background_slides_type');
 
   if ($cw == '') {
     foreach ($fids as $fid) {
@@ -1459,7 +1469,7 @@ function _page_background_get_fids_markup($fids = array()) {
   $page_background_slide_css = array();
   $slides_css = array();
 
-  if (variable_get('page_background_block', FALSE) == TRUE) {
+  if ($config->get('page_background_block') == TRUE) {
     $page_background_container_css[] = '
       #page_background_container{
         height: ' . $ch . ((!preg_match('/%$/i', $ch)) ? 'px' : '') . ';
@@ -1626,9 +1636,9 @@ function _page_background_get_fids_markup($fids = array()) {
               'fit' => $fit,
               'delay' => $delay,
               'sync' => $sync,
-              'page_background_pager_generator' => variable_get('page_background_pager_generator', 'module'),
-              'page_background_nav_links' => variable_get('page_background_nav_links', TRUE),
-              'page_background_pauseonhover' => variable_get('page_background_pauseonhover', TRUE),
+              'page_background_pager_generator' => $config->get('page_background_pager_generator'),
+              'page_background_nav_links' => $config->get('page_background_nav_links'),
+              'page_background_pauseonhover' => $config->get('page_background_pauseonhover'),
             ),
           ),
           'setting',
@@ -1652,18 +1662,18 @@ function _page_background_get_fids_markup($fids = array()) {
   $out['#markup'] .= '</div>';
   if (count($slides) > 1) {
     // $out['#markup'] .= '<div id="page_background_slideshow_navigation">';
-    if (variable_get('page_background_nav_links', TRUE) == TRUE) {
+    if ($config->get('page_background_nav_links') == TRUE) {
       $out['#markup'] .= theme('page_background_nav_link', array('type' => 'prev', 'text' => t('Previous')));
     }
-    if (variable_get('page_background_pager', TRUE) == TRUE) {
-      if (variable_get('page_background_pager_generator', 'module') == 'js') {
+    if ($config->get('page_background_pager') == TRUE) {
+      if ($config->get('page_background_pager_generator') == 'js') {
         $out['#markup'] .= '<div id="page_background_pager" class="pager"></div>';
       }
       else {
         $out['#markup'] .= '<ul id="page_background_pager" class="pager">' . implode('', $pager) . '</ul>';
       }
     }
-    if (variable_get('page_background_nav_links', TRUE) == TRUE) {
+    if ($config->get('page_background_nav_links') == TRUE) {
       $out['#markup'] .= theme('page_background_nav_link', array('type' => 'next', 'text' => t('Next')));
     }
     // $out['#markup'] .= '</div>';
@@ -1694,19 +1704,19 @@ function _page_background_get_fids_markup($fids = array()) {
  * Theme_page_background_slide().
  *
  * Return the markup for a single slide.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function theme_page_background_slide($variables) {
+  $config = config('page_background.settings');
   $image = $variables['image'];
   $background_row = $variables['background_row'];
 
   $out = '';
 
-  if (variable_get('page_background_slogan', FALSE) == TRUE) {
+  if ($config->get('page_background_slogan') == TRUE) {
     $image  .= (trim($background_row->bgtext) != '') ? '<div class="slogan">' . check_markup($background_row->bgtext, $background_row->bgtextformat, $background_row->bgtextlang) . '</div>' : '';
   }
 
-  if (variable_get('page_background_linkurl', FALSE) == TRUE && $background_row->bglinkurl != NULL) {
+  if ($config->get('page_background_linkurl') == TRUE && $background_row->bglinkurl != NULL) {
     $out = '<div class="page_background_slide">' . l($image, $background_row->bglinkurl, array('html' => TRUE)) . '</div>';
   }
   else {
@@ -1719,7 +1729,6 @@ function theme_page_background_slide($variables) {
  * Theme_page_background_nav_link().
  *
  * Return the markup for a navigation link.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function theme_page_background_nav_link($variables) {
   $type = $variables['type'];
@@ -1734,7 +1743,6 @@ function theme_page_background_nav_link($variables) {
  * Theme_page_background_pager_item().
  *
  * Return the markup for a single pager item.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function theme_page_background_pager_item($variables) {
   $key = $variables['key'];
@@ -1748,7 +1756,6 @@ function theme_page_background_pager_item($variables) {
  * Page_background_get_markup_by_path().
  *
  * Returns the markup for a specified path.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function _page_background_get_markup_by_path($path) {
   global $theme_key, $language;
@@ -1770,17 +1777,17 @@ function _page_background_get_markup_by_path($path) {
  * Page_background_get_fids().
  *
  * Return an array of background for the specified path.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function _page_background_get_fids($path = '<front>', $language = NULL) {
+  $config = config('page_background.settings');
   $query = db_select('url_background_images', 'bg');
   $query->fields('bg');
-  $query->addExpression("'" . variable_get('page_background_image_style_name', 'original') . "'", '_stylename');
+  $query->addExpression("'" . $config->get('page_background_image_style_name') . "'", '_stylename');
   $query->condition('path', $path, '=');
   $query->orderBy('weight');
   $query->orderBy('created');
 
-  if (variable_get('page_background_slogan', FALSE) == TRUE && $language != NULL) {
+  if ($config->get('page_background_slogan') == TRUE && $language != NULL) {
     $or = db_or();
     $or->condition('bgtextlang', $language->langcode);
 
@@ -1811,12 +1818,12 @@ function _page_background_get_fids($path = '<front>', $language = NULL) {
  * Page_background_get_default_fids().
  *
  * Return the default backgrounds.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function _page_background_get_default_fids($language = NULL) {
+  $config = config('page_background.settings');
   $query = db_select('url_background_images', 'bg');
   $query->fields('bg');
-  $query->addExpression("'" . variable_get('page_background_image_style_name', 'original') . "'", '_stylename');
+  $query->addExpression("'" . $config->get('page_background_image_style_name') . "'", '_stylename');
   $query->condition('path', NULL, 'IS');
 
   if ($language != NULL) {
@@ -2017,8 +2024,9 @@ function _page_background_cycle_library_path() {
  * Implements hook_block_info().
  */
 function page_background_block_info() {
+  $config = config('page_background.settings');
   $blocks = array();
-  if (variable_get('page_background_block', FALSE) == TRUE) {
+  if ($config->get('page_background_block') == TRUE) {
     $blocks['page_background_block'] = array(
       'info' => t('Page Backgrounds Block'),
       'cache' => BACKDROP_NO_CACHE,
@@ -2032,6 +2040,7 @@ function page_background_block_info() {
  * Implements hook_block_view().
  */
 function page_background_block_view($delta = '') {
+  $config = config('page_background.settings');
   $block = array();
   switch ($delta) {
     case 'page_background_block':
@@ -2074,7 +2083,7 @@ function page_background_block_view($delta = '') {
         }
       }
 
-      $add_css = variable_get('page_background_block_additional_css', '');
+      $add_css = $config->get('page_background_block_additional_css');
       if (trim($add_css) != '') {
         backdrop_add_css($add_css, 'inline');
       }
@@ -2089,12 +2098,13 @@ function page_background_block_view($delta = '') {
  * Implements hook_block_configure().
  */
 function page_background_block_configure($delta = '') {
+  $config = config('page_background.settings');
   $form = array();
   if ($delta == 'page_background_block') {
     $form['page_background_block_additional_css'] = array(
       '#type' => 'textarea',
       '#title' => t('Additional css'),
-      '#default_value' => variable_get('page_background_block_additional_css', ''),
+      '#default_value' => $config->get('page_background_block_additional_css'),
     );
   }
   return $form;
@@ -2104,8 +2114,10 @@ function page_background_block_configure($delta = '') {
  * Implements hook_block_save().
  */
 function page_background_block_save($delta = '', $edit = array()) {
+  $config = config('page_background.settings');
   if ($delta == 'page_background_block') {
-    variable_set('page_background_block_additional_css', $edit['page_background_block_additional_css']);
+    $config->set('page_background_block_additional_css', $edit['page_background_block_additional_css']);
+    $config->save();
   }
 }
 
@@ -2113,7 +2125,6 @@ function page_background_block_save($delta = '', $edit = array()) {
  * Page_background_delete_form().
  *
  * Delete form for a background.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_delete_form($form, &$form_state, $background_row) {
   $form['background_row'] = array(
@@ -2127,7 +2138,6 @@ function page_background_delete_form($form, &$form_state, $background_row) {
  * Page_background_delete_form_submit().
  *
  * Actually deletes a background.
- * You'd have thought? let's add a period at the end of the sentence.
  */
 function page_background_delete_form_submit($form, &$form_state) {
   $numdeleted = _page_background_delete($form_state['values']['background_row']);

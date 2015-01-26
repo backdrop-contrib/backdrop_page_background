@@ -111,3 +111,54 @@ function page_background_requirements($phase) {
   }
   return $requirements;
 }
+
+/**
+ * Move page background settings from variables to config.
+ */
+function page_background_update_1001() {
+  // Migrate variables to config.
+  $config = config('page_background.settings');
+  $config->set('page_background_admin_items_per_page', update_variable_get('page_background_admin_items_per_page', 100));
+  $config->set('page_background_animation_effect', update_variable_get('page_background_animation_effect',  'scrollHorz'));
+  $config->set('page_background_animation_speed', update_variable_get('page_background_animation_speed',  1000));
+  $config->set('page_background_animation_timeout', update_variable_get('page_background_animation_timeout',  5000));
+  $config->set('page_background_block', update_variable_get('page_background_block',  false));
+  $config->set('page_background_block_additional_css', update_variable_get('page_background_block_additional_css',  ''));
+  $config->set('page_background_container_height', update_variable_get('page_background_container_height',  ''));
+  $config->set('page_background_container_width', update_variable_get('page_background_container_width',  ''));
+  $config->set('page_background_default_behavior', update_variable_get('page_background_default_behavior',  'singleframe'));
+  $config->set('page_background_delay', update_variable_get('page_background_delay',  0));
+  $config->set('page_background_fit', update_variable_get('page_background_fit',  true));
+  $config->set('page_background_image_style_name', update_variable_get('page_background_image_style_name',  'original'));
+  $config->set('page_background_linkurl', update_variable_get('page_background_linkurl',  false));
+  $config->set('page_background_nav_links', update_variable_get('page_background_nav_links',  true));
+  $config->set('page_background_pager', update_variable_get('page_background_pager',  true));
+  $config->set('page_background_pager_generator', update_variable_get('page_background_pager_generator',  'module'));
+  $config->set('page_background_pauseonhover', update_variable_get('page_background_pauseonhover',  true));
+  $config->set('page_background_slides_type', update_variable_get('page_background_slides_type',  'styled_divs'));
+  $config->set('page_background_slogan', update_variable_get('page_background_slogan',  false));
+  $config->set('page_background_sync', update_variable_get('page_background_sync',  true));
+  $config->save();
+
+  // Delete variables.
+  update_variable_del('page_background_admin_items_per_page');
+  update_variable_del('page_background_animation_effect');
+  update_variable_del('page_background_animation_speed');
+  update_variable_del('page_background_animation_timeout');
+  update_variable_del('page_background_block');
+  update_variable_del('page_background_block_additional_css');
+  update_variable_del('page_background_container_height');
+  update_variable_del('page_background_container_width');
+  update_variable_del('page_background_default_behavior');
+  update_variable_del('page_background_delay');
+  update_variable_del('page_background_fit');
+  update_variable_del('page_background_image_style_name');
+  update_variable_del('page_background_linkurl');
+  update_variable_del('page_background_nav_links');
+  update_variable_del('page_background_pager');
+  update_variable_del('page_background_pager_generator');
+  update_variable_del('page_background_pauseonhover');
+  update_variable_del('page_background_slides_type');
+  update_variable_del('page_background_slogan');
+  update_variable_del('page_background_sync');
+}

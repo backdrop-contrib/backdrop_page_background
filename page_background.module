@@ -182,7 +182,7 @@ function page_background_form_taxonomy_form_term_alter(&$form, &$form_state, $fo
 
       $file = file_load($bkg->fid);
       $themed_image = array(
-        'path' => $file->uri,
+        'uri' => $file->uri,
         'style_name' => 'thumbnail',
       );
 
@@ -342,7 +342,7 @@ function page_background_form_node_form_alter(&$form, &$form_state, $form_id) {
 
       $file = file_load($bkg->fid);
       $themed_image = array(
-        'path' => $file->uri,
+        'uri' => $file->uri,
         'style_name' => 'thumbnail',
       );
 
@@ -1011,8 +1011,13 @@ function page_background_edit_form($form, &$form_state, $background_row) {
  */
 function page_background_edit_form_validate($form, &$form_state) {
   $config = config('page_background.settings');
-  if ((file_load($form_state['values']['uploadfile'])) === FALSE) {
+  // only for edit, if there is no 'uploadfile' maybe it has not changed
+  if ( !empty($form_state['values']['uploadfile'])  && (file_load($form_state['values']['uploadfile'])) === FALSE) {
     form_set_error('uploadfile', t('A background image is necessary'));
+  }else if(empty($form_state['values']['uploadfile'])){
+    if(is_numeric($form_state['values']['background_row']->fid)){
+      $form_state['values']['uploadfile'] = $form_state['values']['background_row']->fid;
+    }
   }
   if ($form_state['values']['default'] != 1 && (trim($form_state['values']['path']) == '' || !backdrop_valid_path(backdrop_get_normal_path($form_state['values']['path']), TRUE))) {
     form_set_error('path', t('Invalid path'));
@@ -1286,7 +1291,8 @@ function page_background_settings_form($form, &$form_state) {
   // return system_settings_form($form);
 
 
-  $form['submit'] = array(
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
